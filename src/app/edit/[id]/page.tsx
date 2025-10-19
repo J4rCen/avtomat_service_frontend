@@ -24,8 +24,27 @@ const Edit = () => {
     const [productCategory, setProductCategory] = useState<string>(isNew ? '' : product?.category as string)
     const [statusResponse, setStatusResponse] = useState<string>()
     const [showAlert, setShowAlert] = useState<boolean>(false)
+    const [showAlertErr, setShowAlertErr] = useState<boolean>(false)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setShowAlertErr(false)
+        }, 3000)
+
+        return () => clearInterval(interval)
+    }, [showAlertErr])
 
     const createNewProduct = async () => { 
+
+        if (
+            productTitle.length === 0 && 
+            productDescriptions.length === 0 &&
+            productPrice === 0
+        ) {
+            setStatusResponse('Не хватает информации для сохранения')
+            setShowAlertErr(true)
+            return
+        }
 
         const newProduct: IProducts = {
             id: nanoid(),
@@ -92,6 +111,12 @@ const Edit = () => {
                     {
                         showAlert && 
                         <div className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
+                            <span className="font-medium">{statusResponse}</span>
+                        </div>
+                    }
+                    {
+                        showAlertErr && 
+                        <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
                             <span className="font-medium">{statusResponse}</span>
                         </div>
                     }
